@@ -1,17 +1,73 @@
-/* ===== General page styles ===== */
+/* ===========================
+   Global site-wide styles
+   (used by all pages)
+   =========================== */
 
-/* Basic font and some padding so content is not glued to the edges */
+/* Base styles for the whole website */
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 20px;
+  font-family: Arial, Helvetica, sans-serif; /* simple readable font */
+  margin: 0;                                 /* remove default browser margin */
+  padding: 20px;                             /* add inner space around content */
+  background-color: #f0e4c2;                 /* khaki-like background color */
 }
+
+/* Main headings: biggest size */
+h1 {
+  font-size: 2rem;        /* main page title */
+  margin-top: 0;          /* usually first element, no need top margin */
+  margin-bottom: 0.5em;
+}
+
+/* Section headings */
+h2 {
+  font-size: 1.5rem;      /* smaller than h1 */
+  margin-top: 1.5em;      /* extra space before a new section */
+  margin-bottom: 0.5em;
+}
+
+/* Subsection headings */
+h3 {
+  font-size: 1.3rem;      /* smaller than h2 */
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+}
+
+/* Smaller headings, often inside a section */
+h4 {
+  font-size: 1.1rem;      /* smaller than h3 */
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+}
+
+/* Smallest heading level */
+h5 {
+  font-size: 1rem;        /* slightly larger than normal text */
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+}
+
+/* Basic button style for the whole site */
+button {
+  margin-top: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+/* Add more common styles here for all pages later,
+   such as: links, lists, footer*/
+
+
+/* ===========================
+   Recipe Editor specific styles
+   (only affect pages that use these ids/classes)
+   =========================== */
 
 /* Limit the width of the form so lines do not stretch across the whole screen */
 #recipe-form {
-  max-width: 900px; 
+  max-width: 900px;
 }
 
-/* Give section titles some spacing */
+/* Give section titles some spacing in the editor page */
 #ingredients-section,
 #instructions-section {
   margin-top: 25px;
@@ -27,8 +83,8 @@ body {
 /* Label is inline-block so it can sit on the same line as input */
 .field-row label {
   display: inline-block;
-  width: 160px;       /* fixed label width so inputs align nicely */
-  margin-right: 8px;  /* small gap between label and input */
+  width: 160px;        /* fixed label width so inputs align nicely */
+  margin-right: 8px;   /* small gap between label and input */
 }
 
 /* Text inputs and number inputs share similar styling */
@@ -85,14 +141,6 @@ body {
   width: 100%;
   box-sizing: border-box;
   padding: 4px;
-}
-
-/* ===== Buttons ===== */
-
-button {
-  margin-top: 6px;
-  padding: 4px 10px;
-  cursor: pointer;
 }
 
 /* Extra spacing above the final save button */
