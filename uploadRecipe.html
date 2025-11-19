@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Let the page scale correctly on phones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Recipe - Recipe Manager</title>
+
+  <!-- Apply your global CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Main wrapper: matches .page-wrapper in styles.css -->
+  <div class="page-wrapper">
+
+    <!-- Page header -->
+    <header>
+      <h1>Upload Recipe</h1>
+      <p>
+        Use this page to import your recipe from a text file into Recipe Manager.
+      </p>
+    </header>
+
+    <!-- Main content -->
+    <main>
+
+      <!-- Instruction block -->
+      <section class="card">
+        <h2>Upload Instructions</h2>
+        <ul>
+          <li><strong>Uploaded file must be <code>.txt</code></strong></li>
+          <li>Only one recipe per file</li>
+          <li>Make sure your file follows the required recipe text format</li>
+        </ul>
+      </section>
+
+      <!-- Upload form block -->
+      <section class="card">
+        <h2>Upload Your File</h2>
+
+        <div class="upload-container">
+          <!-- File chooser -->
+          <div class="form-group">
+            <label for="fileInput">Choose a recipe file (.txt only):</label>
+            <input id="fileInput" type="file" accept=".txt" />
+          </div>
+
+          <!-- Upload button -->
+          <button id="uploadBtn" class="btn-primary">Upload</button>
+
+          <!-- Message area: success / error will be shown here by JS -->
+          <div id="messageArea">
+            <p id="uploadStatus"></p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Data + logic scripts -->
+  <script src="localData.js"></script>
+  <script src="recipe.js"></script>
+  <script src="upload.js"></script>
+</body>
+</html>

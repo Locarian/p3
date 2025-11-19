@@ -1,59 +1,239 @@
-/* ===========================
-   Global site-wide styles
-   (used by all pages)
-   =========================== */
+/* =========================================
+   Global reset & base
+   ========================================= */
+
+/* Make width/height easier to reason about */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 /* Base styles for the whole website */
 body {
-  font-family: Arial, Helvetica, sans-serif; /* simple readable font */
-  margin: 0;                                 /* remove default browser margin */
-  padding: 20px;                             /* add inner space around content */
-  background-color: #f0e4c2;                 /* khaki-like background color */
+  margin: 0;
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  background-color: #f0e4c2; /* khaki-like background */
+  color: #333;
 }
 
-/* Main headings: biggest size */
+/* Remove default link underline but keep obvious hover */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   Global layout helpers (everyone can use)
+   ========================================= */
+
+/* Page main wrapper: center and limit width */
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;      /* center horizontally */
+}
+
+/* Generic content container (can be nested) */
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* Simple flex helpers */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Recipe cards, sections, etc. */
+.card {
+  background-color: #fffaf0;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================================
+   Global typography (headings for all pages)
+   ========================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: bold;
+  margin-top: 0;            /* usually controlled by sections */
+  color: #333;
+}
+
+/* Main page title */
 h1 {
-  font-size: 2rem;        /* main page title */
-  margin-top: 0;          /* usually first element, no need top margin */
-  margin-bottom: 0.5em;
+  font-size: 2rem;
+  margin-bottom: 0.6em;
 }
 
-/* Section headings */
+/* Section title */
 h2 {
-  font-size: 1.5rem;      /* smaller than h1 */
-  margin-top: 1.5em;      /* extra space before a new section */
+  font-size: 1.6rem;
+  margin-top: 1.4em;
+  margin-bottom: 0.6em;
+}
+
+/* Subsection title */
+h3 {
+  font-size: 1.3rem;
+  margin-top: 1.2em;
   margin-bottom: 0.5em;
 }
 
-/* Subsection headings */
-h3 {
-  font-size: 1.3rem;      /* smaller than h2 */
-  margin-top: 1.2em;
+/* Smaller headings */
+h4 {
+  font-size: 1.1rem;
+  margin-top: 1em;
   margin-bottom: 0.4em;
 }
 
-/* Smaller headings, often inside a section */
-h4 {
-  font-size: 1.1rem;      /* smaller than h3 */
-  margin-top: 1em;
-  margin-bottom: 0.3em;
-}
-
-/* Smallest heading level */
 h5 {
-  font-size: 1rem;        /* slightly larger than normal text */
+  font-size: 1rem;
   margin-top: 0.8em;
   margin-bottom: 0.3em;
 }
 
-/* Basic button style for the whole site */
-button {
-  margin-top: 6px;
-  padding: 4px 10px;
-  cursor: pointer;
+/* Paragraphs and lists */
+p {
+  margin-top: 0;
+  margin-bottom: 0.8em;
 }
 
-/* Add more common styles here for all pages later,
-   such as: links, lists, footer*/
+ul,
+ol {
+  padding-left: 1.4em;
+  margin-top: 0.2em;
+  margin-bottom: 0.8em;
+}
 
+/* =========================================
+   Global forms & buttons (everyone can use)
+   ========================================= */
 
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+}
+
+/* Base button style */
+button,
+.btn {
+  font: inherit;
+  margin-top: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #999;
+  background-color: #fff7dd;
+}
+
+/* Primary button variation (for important actions) */
+.btn-primary {
+  background-color: #f4c464;
+  border-color: #d7a63c;
+}
+
+.btn-primary:hover {
+  background-color: #e4b553;
+}
+
+/* Form field with label + control stacked */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+/* =========================================
+   Upload Recipe page specific
+   ========================================= */
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Make file input and button stretch nicely */
+.upload-container input[type="file"],
+.upload-container button {
+  width: 100%;
+}
+
+/* Upload status text */
+#uploadStatus {
+  font-size: 0.95rem;
+  min-height: 1.2em;
+}
+
+/* =========================================
+   Responsive design (global)
+   ========================================= */
+
+@media (max-width: 768px) {
+  body {
+    padding: 16px;
+  }
+
+  .page-wrapper,
+  .container {
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  button,
+  .btn {
+    padding: 8px 12px; /* easier to tap on phones */
+  }
+}
