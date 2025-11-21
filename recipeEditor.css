@@ -4,8 +4,8 @@ html {
 
 body {
   margin: 0;
-  background-color: rgb(229, 228, 228);
-  color: rgb(120, 118, 118);
+  background-color: #303030;
+  color: #a9a9a9;
 }
 
 div h3 {
@@ -26,26 +26,29 @@ textarea,
 fieldset {
   border: none;
   font-size: 20px;
-  color: rgb(68, 67, 67);
+  color: #e6e6e6;
   field-sizing: content;
   resize: none;
   font-family: "Inter", "Roboto", sans-serif;
+  background-color: #1f1f1f;
+  padding: 2px;
 }
 
 input:focus,
 textarea:focus {
   outline: none;
-  border-bottom: 2px solid #3c3c3c;
+  border-bottom: 2px solid #45f3ff;
 }
 
 .container {
-  width: 60%;
+  width: 65%;
   margin-left: auto;
   margin-right: auto;
 }
 
 .flex {
   display: flex;
+  margin-bottom: 1rem;
 }
 
 .flex-space-between {
@@ -66,7 +69,7 @@ textarea:focus {
 }
 
 #recipe-cover {
-  width: 98%;
+  width: 100%;
   height: 100%;
 }
 
@@ -87,15 +90,25 @@ textarea:focus {
 }
 
 .editor-card {
-  background-color: white;
+  background-color: #1f1f1f;
   display: flex;
   flex-direction: row;
   transition: transform 0.4s, box-shadow 0.4s;
 }
 
-.editor-card:hover {
+#left-panel .editor-card:hover {
   transform: scale(1.03);
-  box-shadow: 4px 4px 5px gray;
+  box-shadow: -2px 4px 3px rgb(98, 184, 98);
+}
+
+#ingredient-list .editor-card:hover {
+  transform: scale(1.03);
+  box-shadow: -2px 4px 3px orange;
+}
+
+#instruction-list .editor-card:hover {
+  transform: scale(1.03);
+  box-shadow: -2px 4px 3px rgb(93, 196, 161);
 }
 
 #left-panel .editor-card {
@@ -104,20 +117,32 @@ textarea:focus {
 
 .card-padding {
   width: 7px;
-  background-color: rgb(125, 216, 125);
+  background-color: rgb(98, 184, 98);
+}
+
+#left-list {
+  flex: 1.4;
+}
+
+.middle-empty-space {
+  width: 2%;
+}
+
+#right-list {
+  flex: 1;
 }
 
 #recipe-ingredients .editor-card .card-padding {
-  background-color: orange;
+  background-color: rgb(221, 144, 1);
 }
 
 #recipe-instructions .editor-card .card-padding {
-  background-color: rgb(108, 219, 182);
+  background-color: rgb(93, 196, 161);
 }
 
 .card-content {
   flex: 1;
-  background-color: white;
+  background-color: #1f1f1f;
   padding: 8px 15px 8px 15px;
 }
 
@@ -142,11 +167,11 @@ textarea:focus {
 .tag-input {
   position: relative;
   height: 30px;
-  background-color: rgb(168, 167, 167);
-  color: white;
+  background-color: #3f3f3f;
+  color: #ffffff;
   border-radius: 5px;
   box-sizing: border-box;
-  padding: 0 8px;
+  padding: 2px 8px;
   text-align: center;
 }
 
@@ -160,8 +185,8 @@ textarea:focus {
   right: -8px;
   width: 18px;
   height: 18px;
-  background-color: #dbd9d9;
-  color: rgb(107, 107, 107);
+  background-color: #575757;
+  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -173,8 +198,8 @@ textarea:focus {
 
 .delete-tag-btn:hover {
   transform: scale(1.1);
-  background-color: #1d1d1d;
-  color: #fff;
+  background-color: #9c2121;
+  color: #ffffff;
 }
 
 #time-flex {
@@ -183,7 +208,8 @@ textarea:focus {
 }
 
 #recipe-cook-time,
-#recipe-prep-time {
+#recipe-prep-time,
+#recipe-servings {
   flex: 1;
 }
 
@@ -212,7 +238,7 @@ textarea:focus {
 }
 
 .adding-btn-dark {
-  color: rgb(120, 118, 118);
+  color: #8b8b8b;
 }
 
 .adding-btn:hover {
@@ -220,7 +246,7 @@ textarea:focus {
 }
 
 .delete-btn {
-  color: #525252;
+  color: #7c7b7b;
   font-size: 20px;
   transition: transform 0.3s ease;
   line-height: 1;
@@ -228,7 +254,7 @@ textarea:focus {
 
 .delete-btn:hover {
   transform: scale(1.2);
-  color: #000;
+  color: #dad8d8;
 }
 
 .delete-btn::before {
@@ -269,14 +295,62 @@ textarea:focus {
   color: #ffd700;
 }
 
-.ingerdient-name-input {
-  width: 160px;
+.ingredient-name-input {
+  min-width: 150px;
 }
 
-.ingerdient-amount-input {
-  width: 50px;
+#save-btn {
+  font-family: inherit;
+  font-size: 20px;
+  background: #1f1f1f;
+  color: white;
+  fill: rgb(155, 153, 153);
+  padding: 0.7em 1em;
+  padding-left: 0.9em;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 15px;
+  font-weight: 1000;
 }
 
-.ingerdient-unit-input {
-  width: 80px;
+#bottom-btn {
+  display: flex;
+  justify-content: end;
+}
+
+#save-btn span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+#save-btn svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+#save-btn:hover {
+  background: #000;
+}
+
+#save-btn:hover .svg-wrapper {
+  transform: scale(1.25);
+  transition: 0.5s linear;
+}
+
+#save-btn:hover svg {
+  transform: translateX(1.2em) scale(1.1);
+  fill: #fff;
+}
+
+#save-btn:hover span {
+  opacity: 0;
+  transition: 0.5s linear;
+}
+
+#save-btn:active {
+  transform: scale(0.95);
 }

@@ -23,8 +23,11 @@ const testRecipes = [
       "Mix with cooked pasta",
     ],
     tags: ["Italian", "Vegetarian", "Quick"],
+    servings: 1,
   },
 ];
+
+let latestServings;
 
 localStorage.setItem("recipes", JSON.stringify(testRecipes));
 
@@ -58,6 +61,9 @@ function loadRecipe(id) {
   // Load prepareTime
   document.getElementById("cook-time-value").value = curRecipe.cookTime || "";
 
+  // Load Servings
+  loadServingsToHTML(curRecipe);
+
   // Load description
   document.getElementById("recipe-description-value").value =
     curRecipe.description || "";
@@ -84,7 +90,7 @@ const saveRecipe = (id) => {
     description: document.getElementById("recipe-description-value").value,
     prepTime: parseInt(document.getElementById("prep-time-value").value) || 0,
     cookTime: parseInt(document.getElementById("cook-time-value").value) || 0,
-    servings: 0, // Not in form, defaulting to 0
+    servings: parseInt(document.getElementById("servings-value").value) || 0,
     ingredients: [],
     instructions: [],
     rating:
@@ -138,6 +144,12 @@ const saveRecipe = (id) => {
 
   localStorage.setItem("recipes", JSON.stringify(recipes));
 };
+
+function addTagToHTML() {
+  const listContainer = document.getElementById("tag-list");
+  const tagDiv = createTagDiv();
+  listContainer.appendChild(tagDiv);
+}
 
 /**
  * Adds a new ingredient item to HTML at the end of the ingredient list
@@ -200,22 +212,20 @@ function loadTagsToHTML(curRecipe) {
 
   if (curRecipe.tags && Array.isArray(curRecipe.tags)) {
     curRecipe.tags.forEach((tag) => {
-      const tagDiv = document.createElement("div");
-      tagDiv.className = "recipe-tag";
+      const tagDiv = createTagDiv(tag);
       tagsContainer.appendChild(tagDiv);
-
-      const tagInput = document.createElement("input");
-      tagInput.type = "text";
-      tagInput.className = "tag-input";
-      tagInput.value = tag;
-      tagDiv.appendChild(tagInput);
-
-      const deleteBtn = document.createElement("div");
-      deleteBtn.className = "delete-tag-btn";
-      deleteBtn.onclick = deleteListItem;
-      tagDiv.appendChild(deleteBtn);
     });
   }
+}
+
+function loadServingsToHTML(curRecipe) {
+  const servingsContainer = document.getElementById("servings-value");
+  servingsContainer.value = curRecipe.servings || 1;
+  latestServings = curRecipe.servings || 1;
+  servingsContainer.addEventListener("change", () => {
+    latestServings = servingsContainer.value;
+    updateIngredientQuantity(latestServings, curRecipe);
+  });
 }
 
 /**
@@ -246,7 +256,25 @@ function loadInstructionsToHTML(curRecipe) {
   });
 }
 
-function createIngredientDiv(ingerdient) {
+function createTagDiv(tag) {
+  const tagDiv = document.createElement("div");
+  tagDiv.className = "recipe-tag";
+
+  const tagInput = document.createElement("input");
+  tagInput.type = "text";
+  tagInput.className = "tag-input";
+  tagInput.placeholder = "new tag";
+  tagInput.value = tag || "";
+  tagDiv.appendChild(tagInput);
+
+  const deleteBtn = document.createElement("div");
+  deleteBtn.className = "delete-tag-btn";
+  deleteBtn.onclick = deleteListItem;
+  tagDiv.appendChild(deleteBtn);
+  return tagDiv;
+}
+
+function createIngredientDiv(ingredient) {
   const ingredientDiv = document.createElement("div");
   ingredientDiv.className = "editor-card";
 
@@ -265,22 +293,23 @@ function createIngredientDiv(ingerdient) {
   const nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.placeholder = "Ingredient name";
-  nameInput.className = "ingerdient-name-input inline-input";
-  nameInput.value = ingerdient.name || "";
+  nameInput.className = "ingredient-name-input inline-input";
+  nameInput.value = (ingredient && ingredient.name) || "";
   inputDiv.appendChild(nameInput);
 
   const quantityInput = document.createElement("input");
   quantityInput.type = "number";
   quantityInput.min = "0";
-  quantityInput.className = "ingerdient-amount-input inline-input";
-  quantityInput.value = ingerdient.quantity || "";
+  quantityInput.className = "ingredient-amount-input inline-input";
+  quantityInput.value =
+    (ingredient && ingredient.quantity * latestServings) || "";
   inputDiv.appendChild(quantityInput);
 
   const unitInput = document.createElement("input");
   unitInput.type = "text";
   unitInput.placeholder = "Unit";
   unitInput.className = "ingredient-unit-input inline-input";
-  unitInput.value = ingerdient.unit || "";
+  unitInput.value = (ingredient && ingredient.unit) || "";
   inputDiv.appendChild(unitInput);
 
   const deleteBtn = document.createElement("div");
@@ -315,4 +344,13 @@ function createInstructionDiv(instruction) {
   contentDiv.appendChild(deleteBtn);
 
   return instructionDiv;
+}
+
+function updateIngredientQuantity(newServings, curRecipe) {
+  const ingredientAmounts = document.querySelectorAll(
+    ".ingredient-amount-input"
+  );
+  curRecipe.ingredients.forEach((ingredient, i) => {
+    ingredientAmounts[i].value = newServings * ingredient.quantity;
+  });
 }
