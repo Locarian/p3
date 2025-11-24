@@ -1,9 +1,10 @@
 html {
   width: 100%;
+  height: 100vh;
   --clr-light-a0: #ffffff;
   --clr-dark-a0: #000000;
   --clr-surface-a0: #121212;
-  --clr-surface-a10: #282828;
+  --clr-surface-a10: #202020;
   --clr-surface-a20: #3f3f3f;
   --clr-surface-a30: #575757;
   --clr-surface-a40: #717171;
@@ -12,7 +13,7 @@ html {
   --clr-text-primary: #a9a9a9;
   --clr-text-secondary: #e6e6e6;
   --clr-accent-green: #53ff64;
-  --clr-accent-orange: #ffbb3e;
+  --clr-accent-orange: #ffd23e;
   --clr-accent-cyan: #73ffff;
   --clr-accent-blue: #45f3ff;
   --clr-accent-yellow: #ffd700;
@@ -28,6 +29,8 @@ html {
 }
 
 body {
+  width: 100%;
+  height: 100%;
   margin: 0;
   background-color: var(--clr-surface-a0);
   color: var(--clr-text-primary);
@@ -57,7 +60,7 @@ fieldset {
   font-family: "Inter", "Roboto", sans-serif;
   background-color: var(--clr-surface-a10);
   padding: 2px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
 }
 
 input:hover,
@@ -74,8 +77,15 @@ textarea:focus {
 
 .container {
   width: 65%;
-  margin-left: auto;
-  margin-right: auto;
+  height: 95%;
+}
+
+.flex-center {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .flex {
