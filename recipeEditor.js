@@ -75,6 +75,9 @@ function loadRecipeToHTML(id) {
   loadInstructionsToHTML(curRecipe);
 }
 
+/**
+ * Saves recipes by calling saveRecipe with current recipe ID
+ */
 function saveRecipes() {
   saveRecipe(currentRecipeId);
 }
@@ -149,6 +152,9 @@ function saveRecipe(id) {
   localStorage.setItem("recipes", JSON.stringify(recipes));
 }
 
+/**
+ * Adds a new tag input field to the tags list
+ */
 function addTagToHTML() {
   const listContainer = document.getElementById("tag-list");
   const tagDiv = createTagDiv();
@@ -193,6 +199,9 @@ function getRecipeById(id) {
   return recipe;
 }
 
+/**
+ * Handles uploading a new cover image for the recipe
+ */
 function uploadNewCover() {
   const input = document.getElementById("cover-img-input");
   const file = input.files[0];
@@ -207,6 +216,10 @@ function uploadNewCover() {
   coverImageInput.style.height = "30%";
 }
 
+/**
+ * Loads cover image to the HTML form
+ * @param {Object} curRecipe - The current recipe object
+ */
 function loadCoverToHTML(curRecipe) {
   const recipeCover = document.getElementById("recipe-cover-img");
   const coverImageInput = document.querySelector(".custum-file-upload");
@@ -219,6 +232,9 @@ function loadCoverToHTML(curRecipe) {
   }
 }
 
+/**
+ * Toggles the height of the image upload input area
+ */
 function changeImageInputHeight() {
   const coverImageInput = document.querySelector(".custum-file-upload");
   if (coverImageInput.style.height === "30%") {
@@ -263,6 +279,10 @@ function loadTagsToHTML(curRecipe) {
   }
 }
 
+/**
+ * Loads servings value to the HTML form and sets up change listener
+ * @param {Object} curRecipe - The current recipe object
+ */
 function loadServingsToHTML(curRecipe) {
   const servingsContainer = document.getElementById("servings-value");
   servingsContainer.value = curRecipe.servings || 1;
@@ -301,6 +321,11 @@ function loadInstructionsToHTML(curRecipe) {
   });
 }
 
+/**
+ * Creates a tag input div element
+ * @param {string} tag - The tag value to pre-populate
+ * @returns {HTMLElement} The created tag div element
+ */
 function createTagDiv(tag) {
   const tagDiv = document.createElement("div");
   tagDiv.className = "recipe-tag";
@@ -319,6 +344,11 @@ function createTagDiv(tag) {
   return tagDiv;
 }
 
+/**
+ * Creates an ingredient input div element
+ * @param {Object} ingredient - The ingredient object with name, quantity, and unit
+ * @returns {HTMLElement} The created ingredient div element
+ */
 function createIngredientDiv(ingredient) {
   const ingredientDiv = document.createElement("div");
   ingredientDiv.className = "editor-card";
@@ -365,6 +395,11 @@ function createIngredientDiv(ingredient) {
   return ingredientDiv;
 }
 
+/**
+ * Creates an instruction input div element
+ * @param {string} instruction - The instruction text to pre-populate
+ * @returns {HTMLElement} The created instruction div element
+ */
 function createInstructionDiv(instruction) {
   const instructionDiv = document.createElement("div");
   instructionDiv.className = "editor-card";
@@ -391,6 +426,11 @@ function createInstructionDiv(instruction) {
   return instructionDiv;
 }
 
+/**
+ * Updates ingredient quantities based on servings change
+ * @param {number} newServings - The new number of servings
+ * @param {Object} curRecipe - The current recipe object
+ */
 function updateIngredientQuantity(newServings, curRecipe) {
   const ingredientAmounts = document.querySelectorAll(
     ".ingredient-amount-input"
