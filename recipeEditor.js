@@ -78,7 +78,8 @@ function loadRecipeToHTML(id) {
 /**
  * Saves recipes by calling saveRecipe with current recipe ID
  */
-function saveRecipes() {
+function saveRecipes(e) {
+  e.preventDefault();
   saveRecipe(currentRecipeId);
 }
 
@@ -87,13 +88,14 @@ function saveRecipes() {
  * @param {number} id - The recipe ID to save
  */
 function saveRecipe(id) {
+  console.log(`Start saving recipe with the id ${id} to localStorage...`);
   const recipes = JSON.parse(localStorage.getItem("recipes") || "[]");
 
   const recipe = {
     id: id,
     coverImage: document.getElementById("recipe-cover-img").src,
     title: document.getElementById("recipe-title-value").value,
-    foodName: document.getElementById("recipe-title-value").value, // Assuming foodName is same as title
+    foodName: document.getElementById("recipe-title-value").value,
     description: document.getElementById("recipe-description-value").value,
     prepTime: parseInt(document.getElementById("prep-time-value").value) || 0,
     cookTime: parseInt(document.getElementById("cook-time-value").value) || 0,
@@ -106,19 +108,19 @@ function saveRecipe(id) {
     tags: [],
   };
 
-  // Get tags
+  // Get tags - Convert HTMLCollection to Array first
   const tagsContainer = document.getElementById("tag-list");
-  const tagDivs = tagsContainer.children();
+  const tagDivs = Array.from(tagsContainer.children);
   tagDivs.forEach((div) => {
     const input = div.querySelector("input");
-    if (input) {
+    if (input && input.value.trim() !== "") {
       recipe.tags.push(input.value);
     }
   });
 
-  // Get ingredients
+  // Get ingredients - Convert HTMLCollection to Array first
   const ingredientsContainer = document.getElementById("ingredient-list");
-  const ingredientDivs = ingredientsContainer.children();
+  const ingredientDivs = Array.from(ingredientsContainer.children);
   ingredientDivs.forEach((div) => {
     const inputs = div.querySelectorAll("input");
     if (inputs.length >= 3) {
@@ -131,12 +133,12 @@ function saveRecipe(id) {
     }
   });
 
-  // Get instructions
+  // Get instructions - Convert HTMLCollection to Array first
   const instructionsContainer = document.getElementById("instruction-list");
-  const instructionDivs = instructionsContainer.children();
+  const instructionDivs = Array.from(instructionsContainer.children);
   instructionDivs.forEach((div) => {
     const textarea = div.querySelector("textarea");
-    if (textarea) {
+    if (textarea && textarea.value.trim() !== "") {
       recipe.instructions.push(textarea.value);
     }
   });
@@ -150,6 +152,7 @@ function saveRecipe(id) {
   }
 
   localStorage.setItem("recipes", JSON.stringify(recipes));
+  console.log("Recipe saved", localStorage.getItem("recipes"));
 }
 
 /**
