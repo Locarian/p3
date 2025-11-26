@@ -1,4 +1,4 @@
-console.log("JavaScript file loaded successfully!");
+console.log("recipeEditor.js loaded successfully!");
 
 const testRecipes = [
   {
@@ -31,13 +31,15 @@ let latestServings;
 
 localStorage.setItem("recipes", JSON.stringify(testRecipes));
 
-loadRecipe(1);
+const currentRecipeId = 1;
+
+loadRecipeToHTML(currentRecipeId);
 
 /**
  * Loads a recipe by its ID and populates the form fields
  * @param {number} id - The recipe ID to load
  */
-function loadRecipe(id) {
+function loadRecipeToHTML(id) {
   const curRecipe = getRecipeById(id);
   if (!curRecipe) return;
 
@@ -73,11 +75,15 @@ function loadRecipe(id) {
   loadInstructionsToHTML(curRecipe);
 }
 
+function saveRecipes() {
+  saveRecipe(currentRecipeId);
+}
+
 /**
  * Saves the current recipe form data to localStorage
  * @param {number} id - The recipe ID to save
  */
-const saveRecipe = (id) => {
+function saveRecipe(id) {
   const recipes = JSON.parse(localStorage.getItem("recipes") || "[]");
 
   const recipe = {
@@ -141,7 +147,7 @@ const saveRecipe = (id) => {
   }
 
   localStorage.setItem("recipes", JSON.stringify(recipes));
-};
+}
 
 function addTagToHTML() {
   const listContainer = document.getElementById("tag-list");
