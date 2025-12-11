@@ -192,7 +192,7 @@ let sampleRecipeCS472 = {
                         ],
                         tags: ["Vegetarian", "Comfort Food", "Soup"],
                         servings: 4
-                    }
+                    },
                 ]
             }
         }
@@ -308,11 +308,110 @@ function addPrivateFolder(folderName, pathArr, UID = "user1") {
 function addPrivateRecipe(recipe, pathArr, UID = "user1") {
     let node = findFolder(pathArr, UID);
     if (node) {
+        if(node.children.find(c=>c.title===recipe.title)){
+            alert(recipe.title + " already exists!");
+            return false;
+        }
         node.children.push(recipe);
         pushLocalData();
         return true;
     }
     return false;
+}
+
+/**
+ * take ID for themealdb.com API and return promise with Recipe object
+ * @param id
+ * @returns {Promise<{Recipe}>}
+ */
+async function apiID2localRecipe(id) {
+    const baseurl = "https://www.themealdb.com/api/json/v1/1/lookup.php?i="
+    return fetch(baseurl + id)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(json => {
+            let newRecipe = {}
+            if (!json.meals || json.meals.length === 0) {
+                throw new Error("Recipe not found.");
+            }
+            let meal = json['meals'][0]
+            newRecipe.id = meal['idMeal'];
+            newRecipe.coverImage = meal['strMealThumb'];
+            newRecipe.instructions = meal['strInstructions'] ? meal['strInstructions'].split(/(?<=[.?!])\s+(?=[A-Z])/) : [];
+            newRecipe.title = meal['strMeal'];
+            newRecipe.description = (meal['strArea'] || '') + " " + (meal['strCategory'] || '') + " " + (meal['strMeal'] || '');
+            newRecipe.foodName = meal['strMeal'];
+
+            newRecipe.tags = meal['strTags'] ? meal['strTags'].split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+            if (meal['strArea']) {
+                newRecipe.tags.push(meal['strArea']);
+            }
+            if (meal['strCategory']) {
+                newRecipe.tags.push(meal['strCategory']);
+            }
+
+            newRecipe.ingredients = []
+            newRecipe.amounts= []
+            newRecipe.units = []
+
+            // Loop for ingredients and measures (up to 20 pairs in TheMealDB API)
+            for (let i = 1; i <= 20; i++) {
+                const ingredientKey = `strIngredient${i}`;
+                const measureKey = `strMeasure${i}`;
+
+                const ingredient = meal[ingredientKey] ? meal[ingredientKey].trim() : null;
+                const measure = meal[measureKey] ? meal[measureKey].trim() : null;
+
+                if (!ingredient) {
+                    break;
+                }
+
+                newRecipe.ingredients.push(ingredient);
+
+                if (measure) {
+                    let measureParts = measure.split(/\s+/).filter(part => part); // Split by whitespace
+
+                    if (measureParts.length === 0) {
+                        newRecipe.amounts.push("");
+                        newRecipe.units.push("");
+                    } else if (measureParts.length === 1) {
+                        // Check if the single part looks like a number (amount) or a string (unit/full measure)
+                        if (!isNaN(parseFloat(measureParts[0])) && isFinite(measureParts[0])) {
+                            newRecipe.amounts.push(measureParts[0]);
+                            newRecipe.units.push(""); // Assume it's just an amount
+                        } else {
+                            newRecipe.amounts.push("");
+                            newRecipe.units.push(measureParts[0]); // Assume it's a full unit description (e.g., "a handful")
+                        }
+                    } else {
+                        // Simple logic for amount/unit split: assumes first part is amount, rest is unit
+                        newRecipe.amounts.push(measureParts[0]);
+                        newRecipe.units.push(measureParts.slice(1).join(' '));
+                    }
+                } else {
+                    newRecipe.amounts.push("");
+                    newRecipe.units.push("");
+                }
+            }
+
+            //API does not support these
+            //random cook, prep time by 5min window
+            newRecipe.cookTime = Math.floor(Math.random() * (24 - 3) + 3) * 5;
+            newRecipe.prepTime = Math.floor(Math.random() * (6 - 1) + 1) * 5;
+            newRecipe.servings = 1;
+            newRecipe.favorite=false;
+            newRecipe.rating = 0;
+
+            return newRecipe;
+        })
+        .catch(error => {
+            console.error("Error fetching or processing recipe:", error);
+            throw error;
+        });
 }
 
 
@@ -324,6 +423,7 @@ export {
     findFolder,
     addPrivateFolder,
     addPrivateRecipe,
+    apiID2localRecipe,
 }
 
 
