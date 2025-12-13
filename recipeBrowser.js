@@ -102,7 +102,9 @@ window.toggleNode = (node) => {
     }
 };
 
-
+/**
+ * Display Tree view of file system
+ */
 function displayTree() {
     tree.innerHTML = "";
 

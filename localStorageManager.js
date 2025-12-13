@@ -1,3 +1,4 @@
+// Updated to include apiRandom2localRecipe and export it
 let sampleRecipeCS472 = {
     public: [],
     private: {
@@ -332,8 +333,8 @@ function addPrivateRecipe(recipe, pathArr, UID = "user1") {
  * @returns {string} The string with fractions converted to decimals.
  */
 function convertFractionsToDecimals(inputString) {
-    // A map of the common special fraction characters to their decimal value strings.
     const fractionMap = {
+        // Unicode Fractions
         '½': '.5',
         '⅓': '.333',
         '⅔': '.667',
@@ -349,16 +350,37 @@ function convertFractionsToDecimals(inputString) {
         '⅜': '.375',
         '⅝': '.625',
         '⅞': '.875',
+
+        // '1/2': '.5',
+        // '1/3': '.333',
+        // '2/3': '.667',
+        // '1/4': '.25',
+        // '3/4': '.75',
+        // '1/5': '.2',
+        // '2/5': '.4',
+        // '3/5': '.6',
+        // '4/5': '.8',
+        // '1/6': '.167',
+        // '5/6': '.833',
+        // '1/8': '.125',
+        // '3/8': '.375',
+        // '5/8': '.625',
+        // '7/8': '.875'
     };
 
-    const fractionCharacters = Object.keys(fractionMap).join('');
-    const fractionRegex = new RegExp(`(\\d+)\\s*([${fractionCharacters}])`, 'g');
+    const keys = Object.keys(fractionMap)
+        .sort((a, b) => b.length - a.length)
+        .map(key => key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+
+    const fractionPattern = keys.join('|');
+
+
+    const fractionRegex = new RegExp(`(\\d*)\\s*(${fractionPattern})`, 'g');
 
     return inputString.replace(fractionRegex, (match, wholeNumber, fractionChar) => {
         const decimalValue = fractionMap[fractionChar];
-
         if (decimalValue) {
-            return wholeNumber + decimalValue;
+            return (wholeNumber || "") + decimalValue;
         }
         return match;
     });
@@ -380,86 +402,108 @@ async function apiID2localRecipe(id) {
             }
             return res.json();
         })
-        .then(json => {
-            let newRecipe = {}
-            if (!json.meals || json.meals.length === 0) {
-                throw new Error("Recipe not found.");
+        .then(json => processApiJson(json));
+}
+
+/**
+ * Calls themealdb.com API for a random meal and returns promise with Recipe object
+ * @returns {Promise<{Recipe}>}
+ */
+async function apiRandom2localRecipe() {
+    const randomUrl = "https://www.themealdb.com/api/json/v1/1/random.php";
+    return fetch(randomUrl)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
             }
-            let meal = json['meals'][0]
-            newRecipe.id = meal['idMeal'];
-            newRecipe.coverImage = meal['strMealThumb'];
-            newRecipe.instructions = meal['strInstructions'] ? meal['strInstructions'].split(/(?<=[.?!])\s+(?=[A-Z])/) : [];
-            newRecipe.title = meal['strMeal'];
-            newRecipe.description = (meal['strArea'] || '') + " " + (meal['strCategory'] || '') + " " + (meal['strMeal'] || '');
-            newRecipe.foodName = meal['strMeal'];
+            return res.json();
+        })
+        .then(json => processApiJson(json));
+}
 
-            newRecipe.tags = meal['strTags'] ? meal['strTags'].split(',').map(tag => tag.trim()).filter(tag => tag) : [];
-            if (meal['strArea']) {
-                newRecipe.tags.push(meal['strArea']);
-            }
-            if (meal['strCategory']) {
-                newRecipe.tags.push(meal['strCategory']);
-            }
+/**
+ * Helper function to process API JSON response into local Recipe object
+ * for API call returning ONLY ONE MEAL
+ * @param json
+ * @returns {{Recipe}}
+ */
+function processApiJson(json) {
+    let newRecipe = {}
+    if (!json.meals || json.meals.length === 0) {
+        throw new Error("Recipe not found.");
+    }
+    let meal = json['meals'][0]
+    newRecipe.id = meal['idMeal'];
+    newRecipe.coverImage = meal['strMealThumb'];
+    newRecipe.instructions = meal['strInstructions'] ? meal['strInstructions'].split(/(?<=[.?!])\s+(?=[A-Z])/) : [];
+    newRecipe.title = meal['strMeal'];
+    newRecipe.description = (meal['strArea'] || '') + " " + (meal['strCategory'] || '') + " " + (meal['strMeal'] || '');
+    newRecipe.foodName = meal['strMeal'];
 
-            newRecipe.ingredients = []
-            newRecipe.amounts= []
-            newRecipe.units = []
+    newRecipe.tags = meal['strTags'] ? meal['strTags'].split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+    if (meal['strArea']) {
+        newRecipe.tags.push(meal['strArea']);
+    }
+    if (meal['strCategory']) {
+        newRecipe.tags.push(meal['strCategory']);
+    }
 
-            // Loop for ingredients and measures (up to 20 pairs in TheMealDB API)
-            for (let i = 1; i <= 20; i++) {
-                const ingredientKey = `strIngredient${i}`;
-                const measureKey = `strMeasure${i}`;
+    newRecipe.ingredients = []
+    newRecipe.amounts= []
+    newRecipe.units = []
 
-                const ingredient = meal[ingredientKey] ? meal[ingredientKey].trim() : null;
-                const measure = meal[measureKey] ? meal[measureKey].trim() : null;
+    // Loop for ingredients and measures (up to 20 pairs in TheMealDB API)
+    for (let i = 1; i <= 20; i++) {
+        const ingredientKey = `strIngredient${i}`;
+        const measureKey = `strMeasure${i}`;
 
-                if (!ingredient) {
-                    break;
-                }
+        const ingredient = meal[ingredientKey] ? meal[ingredientKey].trim() : null;
+        const measure = meal[measureKey] ? meal[measureKey].trim() : null;
 
-                newRecipe.ingredients.push(ingredient);
+        if (!ingredient) {
+            break;
+        }
 
-                if (measure) {
-                    let measurestr = convertFractionsToDecimals(measure);
-                    let measureParts = measurestr.split(/\s+/).filter(part => part); // Split by whitespace
+        newRecipe.ingredients.push(ingredient);
 
-                    if (measureParts.length === 0) {
-                        newRecipe.amounts.push("");
-                        newRecipe.units.push("");
-                    } else if (measureParts.length === 1) {
-                        // Check if the single part looks like a number (amount) or a string (unit/full measure)
-                        if (!isNaN(parseFloat(measureParts[0])) && isFinite(measureParts[0])) {
-                            newRecipe.amounts.push(measureParts[0]);
-                            newRecipe.units.push(""); // Assume it's just an amount
-                        } else {
-                            newRecipe.amounts.push("");
-                            newRecipe.units.push(measureParts[0]); // Assume it's a full unit description (e.g., "a handful")
-                        }
-                    } else {
-                        // Simple logic for amount/unit split: assumes first part is amount, rest is unit
-                        newRecipe.amounts.push(measureParts[0]);
-                        newRecipe.units.push(measureParts.slice(1).join(' '));
-                    }
+        if (measure) {
+            let measurestr = convertFractionsToDecimals(measure);
+            console.log(measure);
+            console.log(measurestr);
+            let measureParts = measurestr.split(/\s+/).filter(part => part); // Split by whitespace
+
+            if (measureParts.length === 0) {
+                newRecipe.amounts.push("");
+                newRecipe.units.push("");
+            } else if (measureParts.length === 1) {
+                // Check if the single part looks like a number (amount) or a string (unit/full measure)
+                if (!isNaN(parseFloat(measureParts[0])) && isFinite(measureParts[0])) {
+                    newRecipe.amounts.push(measureParts[0]);
+                    newRecipe.units.push(""); // Assume it's just an amount
                 } else {
                     newRecipe.amounts.push("");
-                    newRecipe.units.push("");
+                    newRecipe.units.push(measureParts[0]); // Assume it's a full unit description (e.g., "a handful")
                 }
+            } else {
+                // Simple logic for amount/unit split: assumes first part is amount, rest is unit
+                newRecipe.amounts.push(measureParts[0]);
+                newRecipe.units.push(measureParts.slice(1).join(' '));
             }
+        } else {
+            newRecipe.amounts.push("");
+            newRecipe.units.push("");
+        }
+    }
 
-            //API does not support these
-            //random cook, prep time by 5min window
-            newRecipe.cookTime = Math.floor(Math.random() * (24 - 3) + 3) * 5;
-            newRecipe.prepTime = Math.floor(Math.random() * (6 - 1) + 1) * 5;
-            newRecipe.servings = 1;
-            newRecipe.favorite=false;
-            newRecipe.rating = 0;
+    //API does not support these
+    //random cook, prep time by 5min window
+    newRecipe.cookTime = Math.floor(Math.random() * (24 - 3) + 3) * 5;
+    newRecipe.prepTime = Math.floor(Math.random() * (6 - 1) + 1) * 5;
+    newRecipe.servings = 1;
+    newRecipe.favorite=false;
+    newRecipe.rating = 0;
 
-            return newRecipe;
-        })
-        .catch(error => {
-            console.error("Error fetching or processing recipe:", error);
-            throw error;
-        });
+    return newRecipe;
 }
 
 
@@ -472,8 +516,5 @@ export {
     addPrivateFolder,
     addPrivateRecipe,
     apiID2localRecipe,
+    apiRandom2localRecipe,
 }
-
-
-
-
