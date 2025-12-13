@@ -153,7 +153,6 @@ function displayView() {
     view.innerHTML = "";
     const node = currentNode;
     const items = (node.children).slice();
-    console.log(items);
     const q = (searchInput.value || '').toLowerCase();
     const filtered = items.filter(item => item.title.toLowerCase().includes(q));
     pathInfo.textContent = `${filtered.length} item(s) in ${currentPath.join(' / ')}`;
@@ -169,8 +168,6 @@ function displayView() {
         if (item.type !== "folder") {
             totalTime = parseInt(item.cookTime) + parseInt(item.prepTime) + " min";
         }
-        console.log(item.id);
-        console.log(Object.keys(item).length)
         // TODO: Main view item elements
         el.innerHTML = `
                     

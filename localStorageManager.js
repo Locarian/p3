@@ -319,8 +319,55 @@ function addPrivateRecipe(recipe, pathArr, UID = "user1") {
     return false;
 }
 
+
+/**
+ * Replaces fraction characters (e.g., ½, ¼, ⅓) in a string
+ * with their decimal equivalents. (e.g., .5, .25, .333)
+ *
+ * It handles both:
+ * - Whole number + space + fraction (e.g., "2 ½")
+ * - Whole number + fraction (e.g., "2½")
+ *
+ * @param {string} inputString The string containing whole numbers and fractions.
+ * @returns {string} The string with fractions converted to decimals.
+ */
+function convertFractionsToDecimals(inputString) {
+    // A map of the common special fraction characters to their decimal value strings.
+    const fractionMap = {
+        '½': '.5',
+        '⅓': '.333',
+        '⅔': '.667',
+        '¼': '.25',
+        '¾': '.75',
+        '⅕': '.2',
+        '⅖': '.4',
+        '⅗': '.6',
+        '⅘': '.8',
+        '⅙': '.167',
+        '⅚': '.833',
+        '⅛': '.125',
+        '⅜': '.375',
+        '⅝': '.625',
+        '⅞': '.875',
+    };
+
+    const fractionCharacters = Object.keys(fractionMap).join('');
+    const fractionRegex = new RegExp(`(\\d+)\\s*([${fractionCharacters}])`, 'g');
+
+    return inputString.replace(fractionRegex, (match, wholeNumber, fractionChar) => {
+        const decimalValue = fractionMap[fractionChar];
+
+        if (decimalValue) {
+            return wholeNumber + decimalValue;
+        }
+        return match;
+    });
+}
+
+
 /**
  * take ID for themealdb.com API and return promise with Recipe object
+ * Warning: Amounts are in string. Some may include non-numeral strings (i.e. 400g)
  * @param id
  * @returns {Promise<{Recipe}>}
  */
@@ -373,7 +420,8 @@ async function apiID2localRecipe(id) {
                 newRecipe.ingredients.push(ingredient);
 
                 if (measure) {
-                    let measureParts = measure.split(/\s+/).filter(part => part); // Split by whitespace
+                    let measurestr = convertFractionsToDecimals(measure);
+                    let measureParts = measurestr.split(/\s+/).filter(part => part); // Split by whitespace
 
                     if (measureParts.length === 0) {
                         newRecipe.amounts.push("");
