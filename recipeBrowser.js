@@ -32,9 +32,9 @@ window._expanded = new Set(['root']);
 
 /**
  *
- * @param {node}node current node to get a path
- * @returns {node[]} array of nodes
- * @description walk from the given node all the way up to the root and add name of each node in front of node array that represents a path
+ * @param {node}node current node(recipe) to get a path
+ * @returns {node[]} array of nodes(recipe titles)
+ * @description walk from the given node(recipe) all the way up to the root and add name of each node in front of node array that represents a path
  */
 function getPathOfNode(node) {
     const path = [];
@@ -62,7 +62,7 @@ function getPathOfNode(node) {
  * @param {node[]}pathArr array of nodes from root
  * @returns {node|null} node object found from a file system
  * @description
- * take array of nodes as path and return node object if found.
+ * take array of nodes(recipe titles) as path and return node(recipe) object if found.
  */
 
 function findNodeByPath(pathArr) {
@@ -81,7 +81,7 @@ function findNodeByPath(pathArr) {
 
 /**
  *
- * @param node - node to get an ID in window._expanded
+ * @param node - node(recipe) to get an ID in window._expanded
  * @returns {string} - full path in string
  * @description
  * @example
