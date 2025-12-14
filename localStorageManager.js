@@ -532,30 +532,59 @@ function processApiJson(json, conversion = false) {
     return newRecipe;
 }
 
-
+/**
+ * store file save path into session storage
+ * Use this before opening new page
+ * @param path
+ */
 function setSaveFilePathToOpen(path) {
     sessionStorage.setItem(OPEN_FILE_SESSION_KEY, JSON.stringify(path));
 }
 
+/**
+ * get file save path from session storage
+ * Use this after opening a page
+ * @returns {any}
+ */
 function getSaveFilePathToOpen() {
     const path = JSON.parse(sessionStorage.getItem(OPEN_FILE_SESSION_KEY));
     sessionStorage.removeItem(OPEN_FILE_SESSION_KEY);
     return path;
 }
 
+
+/**
+ * store single recipe object to open into session storage
+ * Use this before opening new page
+ * @param recipe
+ */
 function setRecipeToOpen(recipe) {
     sessionStorage.setItem(OPEN_FILE_RECIPE_OBJ, JSON.stringify(recipe));
 }
 
+/**
+ * get single recipe object to open from session storage
+ * Use this after opening a page
+ * @returns {any|null}
+ */
 function getRecipeToOpen() {
     const data = sessionStorage.getItem(OPEN_FILE_RECIPE_OBJ);
     return data ? JSON.parse(data) : null;
 }
 
+/**
+ * store array of recipes to open into session storage
+ * Use this before opening new page
+ * @param recipes
+ */
 function setSelectedRecipes(recipes) {
     sessionStorage.setItem(SELECTED_RECIPES_KEY, JSON.stringify(recipes));
 }
 
+/**
+ * store array of recipes to open from session storage
+ * Use this after opening a page
+ */
 function getSelectedRecipes() {
     const data = sessionStorage.getItem(SELECTED_RECIPES_KEY);
     sessionStorage.removeItem(SELECTED_RECIPES_KEY);

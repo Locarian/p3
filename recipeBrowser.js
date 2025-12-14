@@ -143,6 +143,9 @@ function displayTree() {
     walk(FS, 0);
 }
 
+/**
+ * Display Center View panel
+ */
 function displayView() {
     view.innerHTML = "";
     const node = currentNode;
@@ -235,6 +238,10 @@ function displayView() {
     })
 }
 
+
+/**
+ * Display top breadcrumb
+ */
 function displayBreadcrumb() {
     breadcrumb.innerHTML = "";
     currentPath.forEach((p, i) => {
@@ -251,7 +258,9 @@ function displayBreadcrumb() {
     });
 }
 
-
+/**
+ * Refresh page
+ */
 function displayAll() {
     displayTree();
     displayView();
@@ -263,12 +272,22 @@ function displayAll() {
     document.getElementById('previewInner').textContent = 'Nothing selected';
 }
 
+
+/**
+ * move to given path
+ * @param pathArr
+ */
 function navigateTo(pathArr) {
     currentPath = pathArr;
     currentNode = findNodeByPath(pathArr);
     displayAll();
 }
 
+
+/**
+ * open selected recipe in other pages
+ * @param node
+ */
 function openFile(node) {
     selectItem(node);
     let path = getPathOfNode(node);
@@ -278,6 +297,12 @@ function openFile(node) {
     window.location.href = "recipeDisplay.html";
 }
 
+
+/**
+ * select recipe and highlight it
+ * @param node a recipe user clicked
+ * @param elemRef html element clicked
+ */
 function selectItem(node, elemRef) {
     selected = node;
     Array.from(view.querySelectorAll('.item')).forEach(c => c.classList.remove('selected'));

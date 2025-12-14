@@ -1,6 +1,5 @@
-import {convertFractionsToDecimals} from "./localStorageManager.js";
+import {convertFractionsToDecimals, getSelectedRecipes} from "./localStorageManager.js";
 
-const SELECTED_RECIPES_KEY = "CS472SELECTEDRECIPES";
 const recipeListContainer = document.getElementById("recipeListContainer");
 const shoppingListContainer = document.getElementById("shoppingListContainer");
 const emptyMsg = document.getElementById("emptyMsg");
@@ -9,16 +8,10 @@ const backBtn = document.getElementById("backBtn");
 let loadedRecipes = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-    const data = sessionStorage.getItem(SELECTED_RECIPES_KEY);
-    if (!data) {
-        alert("No recipes selected. Redirecting to browser.");
-        window.location.href = "recipeBrowser.html";
-        return;
-    }
-    loadedRecipes = JSON.parse(data);
+    loadedRecipes = getSelectedRecipes();
 
-    if (loadedRecipes.length === 0) {
-        alert("Selection is empty. Redirecting to browser.");
+    if (loadedRecipes === null) {
+        alert("Selection is empty. Returning to browser.");
         window.location.href = "recipeBrowser.html";
         return;
     }
