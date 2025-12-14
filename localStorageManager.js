@@ -1,4 +1,3 @@
-// Updated to include apiRandom2localRecipe and export it
 let sampleRecipeCS472 = {
     public: [],
     private: {
@@ -202,6 +201,7 @@ let sampleRecipeCS472 = {
 const LOCALSTORAGEKEY = "RecipeCS472"
 const OPEN_FILE_SESSION_KEY = "CS472OPENFILEPATH";
 const OPEN_FILE_RECIPE_OBJ = "CS472OPENRECIPEOBJ";
+const SELECTED_RECIPES_KEY = "CS472SELECTEDRECIPES"
 let localData = null;
 localData = fetchLocalData();
 pushLocalData();
@@ -304,16 +304,20 @@ function addPrivateFolder(folderName, pathArr, UID = "user1") {
  * @param recipe new recipe object to add
  * @param {node[]}pathArr array of nodes from root (ex: ['root', 'a', 'b'] for root/a/b folder
  * @param UID user name
+ * @param overwrite
  * @returns {boolean} true if successful
  * @description
  * take array of nodes as path and add a new recipe
+ * set overwrite to True to ignore error message and overwrite recipe. (for recipeEditor)
  */
-function addPrivateRecipe(recipe, pathArr, UID = "user1") {
+function addPrivateRecipe(recipe, pathArr, UID = "user1",overwrite=false) {
     let node = findFolder(pathArr, UID);
     if (node) {
         if (node.children.find(c => c.title === recipe.title)) {
-            alert(recipe.title + " already exists!");
-            return false;
+            if(!overwrite){
+                alert(recipe.title + " already exists!");
+                return false;
+            }
         }
         node.children.push(recipe);
         pushLocalData();
@@ -429,7 +433,7 @@ async function apiRandom2localRecipe() {
  * if you want to convert fractions into decimals, set conversion=true
  * @param json
  * @param conversion
- * @returns {{Recipe}}
+ * @returns {{Recipe}
  */
 function processApiJson(json, conversion = false) {
     let newRecipe = {}
@@ -474,8 +478,6 @@ function processApiJson(json, conversion = false) {
             let measureParts = []
             if (conversion) {
                 let measurestr = convertFractionsToDecimals(measure);
-                // console.log(measure);
-                // console.log(measurestr);
                 measureParts = measurestr.split(/\s+/).filter(part => part); // Split by whitespace
             } else {
                 measureParts = measure.split(/\s+/).filter(part => part); // Split by whitespace
@@ -486,13 +488,20 @@ function processApiJson(json, conversion = false) {
                 newRecipe.amounts.push("");
                 newRecipe.units.push("");
             } else if (measureParts.length === 1) {
-                // Check if the single part looks like a number (amount) or a string (unit/full measure)
-                if (!isNaN(parseFloat(measureParts[0])) && isFinite(measureParts[0])) {
-                    newRecipe.amounts.push(measureParts[0]);
-                    newRecipe.units.push(""); // Assume it's just an amount
+                // Check if the single part looks like a number (amount)
+                const part = measureParts[0];
+                if (!isNaN(parseFloat(part)) && isFinite(part)) {
+                    newRecipe.amounts.push(part);
+                    newRecipe.units.push("");
                 } else {
-                    newRecipe.amounts.push("");
-                    newRecipe.units.push(measureParts[0]); // Assume it's a full unit description (e.g., "a handful")
+                    const match = part.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z%]+)$/);
+                    if (match) {
+                        newRecipe.amounts.push(match[1]); // Amount
+                        newRecipe.units.push(match[2]);   // Unit
+                    } else {
+                        newRecipe.amounts.push("");
+                        newRecipe.units.push(part); // it's all unit text
+                    }
                 }
             } else {
                 // Simple logic for amount/unit split: assumes first part is amount, rest is unit
@@ -533,13 +542,18 @@ function setRecipeToOpen(recipe) {
 
 function getRecipeToOpen() {
     const data = sessionStorage.getItem(OPEN_FILE_RECIPE_OBJ);
-    // Note: We generally don't remove it immediately if we want to persist it across reloads,
-    // but typically we remove it when consuming it if it's a one-time pass.
-    // For a display page, we usually keep it or re-fetch.
-    // I will return the parsed object.
     return data ? JSON.parse(data) : null;
 }
 
+function setSelectedRecipes(recipes) {
+    sessionStorage.setItem(SELECTED_RECIPES_KEY, JSON.stringify(recipes));
+}
+
+function getSelectedRecipes() {
+    const data = sessionStorage.getItem(SELECTED_RECIPES_KEY);
+    sessionStorage.removeItem(SELECTED_RECIPES_KEY);
+    return data ? JSON.parse(data) : null;
+}
 
 export {
     localData,
@@ -555,4 +569,7 @@ export {
     getSaveFilePathToOpen,
     setRecipeToOpen,
     getRecipeToOpen,
+    convertFractionsToDecimals,
+    setSelectedRecipes,
+    getSelectedRecipes,
 }

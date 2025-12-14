@@ -1,15 +1,6 @@
 import {
-    localData,
-    getPublicRecipes,
-    addPublicRecipe,
     getUserFS,
-    findFolder,
-    addPrivateFolder,
-    addPrivateRecipe,
-    apiID2localRecipe,
-    apiRandom2localRecipe,
     setSaveFilePathToOpen,
-    getSaveFilePathToOpen,
     setRecipeToOpen
 } from "./localStorageManager.js";
 
@@ -24,8 +15,6 @@ const pathInfo = document.getElementById("pathInfo");
 const searchInput = document.getElementById("search");
 const upBtn = document.getElementById("upBtn");
 //Each file/ folder represented as node obj.
-
-
 
 
 //array of active Nodes to be displayed
@@ -166,23 +155,64 @@ function displayView() {
         const col = document.createElement("div");
         col.className = 'col';
         const el = document.createElement("div");
-        el.className = 'item card p-3 h-100';
+
+        el.className = 'item card p-3 h-100 position-relative';
         el.tabIndex = 0;
         el.dataset.title = item.title;
+
         let totalTime = undefined;
+
+        // --- 1. Background Image for Recipes ---
         if (item.type !== "folder") {
             totalTime = parseInt(item.cookTime) + parseInt(item.prepTime) + " min";
+
+            // Set background if image exists
+            if (item.coverImage) {
+                el.style.backgroundImage = `url(${item.coverImage})`;
+                el.classList.add('has-bg');
+            }
+        } else {
+            el.setAttribute('style', 'background: var(--clr-surface-a10) !important');
         }
-        // TODO: Main view item elements
+
+        // --- 2. Icon Logic ---
+        const typeIcon = item.type === "folder" ? "📂" : "📄";
+        const iconClass = `icon ${item.type === "folder" ? "folder" : "file"} mb-2`;
+
+        // --- 3. Heart Icon Logic ---
+        let heartHtml = "";
+        if (item.type !== "folder") {
+            const heartIconClass = item.favorite ? "bi-heart-fill text-danger" : "bi-heart";
+            heartHtml = `<div class="fav-icon position-absolute top-0 start-0 m-2 p-1 rounded-circle bg-dark bg-opacity-50 text-light" style="cursor: pointer; z-index: 10;">
+                            <i class="bi ${heartIconClass}" style="font-size: 1.2rem;"></i>
+                         </div>`;
+        }
+
+        // Hide main icon if bg exists to clean up view, but keep text readable via overlay
         el.innerHTML = `
-                    
-                    <div class="icon ${item.type === "folder" ? "folder" : "file"} mb-2">${item.type === "folder" ? "📂" : "📄"}</div>
-                    <div class="fw-bold text-truncate mb-1" style="font-size: 1.5rem">${item.title}</div>
-                    <div class="meta d-flex justify-content-between mt-1" style="font-size: 1rem;">
-                        <div style="font-size: 1rem">${item.type || item.foodName}</div>
-                        <div>${totalTime || ""}</div>
+                    ${heartHtml}
+                    <div class="${iconClass}" style="${item.coverImage && item.type !== 'folder' ? 'opacity:0' : ''}">${typeIcon}</div>
+                    <div class="content-wrapper position-relative" style="z-index: 2;">
+                        <div class="fw-bold text-truncate mb-1" style="font-size: 1.5rem; text-shadow: ${item.coverImage ? '0 2px 4px rgba(0,0,0,0.8)' : 'none'}">${item.title}</div>
+                        <div class="meta d-flex justify-content-between mt-1" style="font-size: 1rem; text-shadow: ${item.coverImage ? '0 2px 4px rgba(0,0,0,0.8)' : 'none'}">
+                            <div style="font-size: 1rem">${item.type || item.foodName}</div>
+                            <div>${totalTime || ""}</div>
+                        </div>
                     </div>
                 `;
+
+        if (item.type !== "folder") {
+            const heartBtn = el.querySelector('.fav-icon');
+            if (heartBtn) {
+                heartBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    item.favorite = !item.favorite;
+                    displayView();
+                    if (selected === item) selectItem(item);
+                });
+            }
+        }
+
         el.addEventListener("click", () => {
             selectItem(item, el);
         });
@@ -253,18 +283,58 @@ function selectItem(node, elemRef) {
     Array.from(view.querySelectorAll('.item')).forEach(c => c.classList.remove('selected'));
     if (elemRef) elemRef.classList.add('selected');
 
-    document.getElementById('detailMeta').textContent = (node.rating ? "rating: " + node.rating + ' • ' : '') + (node.prepTime && node.cookTime ? node.prepTime + node.cookTime + " mins" : "");
+    // --- Right Panel Logic ---
+
+    // 1. Meta Data (Stars + Clock)
+    let metaHtml = "";
+    if (node.rating !== undefined) {
+        metaHtml += `<div class="text-warning mb-1">`;
+        for (let i = 1; i <= 5; i++) {
+            if (i <= node.rating) {
+                metaHtml += `<i class="bi bi-star-fill"></i> `;
+            } else {
+                metaHtml += `<i class="bi bi-star"></i> `;
+            }
+        }
+        metaHtml += `</div>`;
+    }
+
+    if (node.prepTime && node.cookTime) {
+        // [UPDATED] Use Bootstrap clock icon instead of emoji
+        metaHtml += `<div class="d-flex align-items-center gap-2 mt-1"><i class="bi bi-clock"></i> <span>${parseInt(node.prepTime) + parseInt(node.cookTime)} mins</span></div>`;
+    }
+
+    document.getElementById('detailMeta').innerHTML = metaHtml;
     document.getElementById('detailName').textContent = node.type || "Recipe";
-    const icon = document.getElementById('detailIcon');
-    icon.textContent = node.type === 'folder' ? '📁' : '📄';
-    icon.className = 'big icon ' + (node.type === 'folder' ? 'folder' : 'file');
+
+    // top left icon
+    const iconContainer = document.getElementById('detailIcon');
+    iconContainer.style.backgroundImage = "none";
+    iconContainer.textContent = node.type === 'folder' ? '📁' : '📄';
+    iconContainer.className = 'big icon ' + (node.type === 'folder' ? 'folder' : 'file');
+
     document.getElementById('detailContent').textContent = node.type === 'folder' ? (node.children ? `${node.children.length} items` : 'Empty folder') : `${node.title}`;
 
-    // TODO: preview area
+    // quick look preview
     const previewInner = document.getElementById('previewInner');
-    if (node.type === 'file') {
-        if (node.previewType === 'image' && node.src) {
-            previewInner.innerHTML = `<img src="${node.src}" alt="${node.name}" class="img-fluid rounded">`;
+    if (node.type !== 'folder') {
+        if (node.coverImage) {
+            previewInner.innerHTML = `
+                <img src="${node.coverImage}" alt="${node.title}" class="img-fluid rounded mb-3 w-100" style="max-height: 200px; object-fit: cover;">
+                
+                <div class="mb-3  d-flex align-items-center gap-1" style="color: var(--clr-primary-a50)">
+                    <i class="bi bi-hash"></i> 
+                    <span>${(node.tags || []).join(', ')}</span>
+                </div>
+                
+                <h6>Ingredients:</h6>
+                <ul class="ps-3 small text-secondary">
+                    ${(node.ingredients || []).slice(0, 5).map(i => {
+                return `<li>${typeof i === 'string' ? i : (i.quantity || '') + ' ' + (i.unit || '') + ' ' + i.name}</li>`;
+            }).join('')}
+                    ${(node.ingredients && node.ingredients.length > 5) ? '<li>...</li>' : ''}
+                </ul>
+             `;
         } else if (node.content) {
             const pre = document.createElement('pre');
             pre.classList.add('p-2', 'rounded');
