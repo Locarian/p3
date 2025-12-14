@@ -1,7 +1,7 @@
 import {
     getUserFS,
     setSaveFilePathToOpen,
-    setRecipeToOpen
+    setRecipeToOpen, addPrivateRecipe
 } from "./localStorageManager.js";
 
 let FS = getUserFS();
@@ -162,7 +162,7 @@ function displayView() {
 
         let totalTime = undefined;
 
-        // --- 1. Background Image for Recipes ---
+        // background image for recipes
         if (item.type !== "folder") {
             totalTime = parseInt(item.cookTime) + parseInt(item.prepTime) + " min";
 
@@ -175,20 +175,18 @@ function displayView() {
             el.setAttribute('style', 'background: var(--clr-surface-a10) !important');
         }
 
-        // --- 2. Icon Logic ---
         const typeIcon = item.type === "folder" ? "📂" : "📄";
         const iconClass = `icon ${item.type === "folder" ? "folder" : "file"} mb-2`;
 
-        // --- 3. Heart Icon Logic ---
+        // fav icon (heart)
         let heartHtml = "";
         if (item.type !== "folder") {
             const heartIconClass = item.favorite ? "bi-heart-fill text-danger" : "bi-heart";
-            heartHtml = `<div class="fav-icon position-absolute top-0 start-0 m-2 p-1 rounded-circle bg-dark bg-opacity-50 text-light" style="cursor: pointer; z-index: 10;">
+            heartHtml = `<div class="fav-icon position-absolute top-0 start-0 m-2 p-1 rounded-circle bg-opacity-50 text-light" style="cursor: pointer; z-index: 10;">
                             <i class="bi ${heartIconClass}" style="font-size: 1.2rem;"></i>
                          </div>`;
         }
 
-        // Hide main icon if bg exists to clean up view, but keep text readable via overlay
         el.innerHTML = `
                     ${heartHtml}
                     <div class="${iconClass}" style="${item.coverImage && item.type !== 'folder' ? 'opacity:0' : ''}">${typeIcon}</div>
@@ -207,6 +205,8 @@ function displayView() {
                 heartBtn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     item.favorite = !item.favorite;
+                    const path=getPathOfNode(item).slice(0,-1);
+                    addPrivateRecipe(item,path, "user1",true)
                     displayView();
                     if (selected === item) selectItem(item);
                 });
@@ -283,9 +283,7 @@ function selectItem(node, elemRef) {
     Array.from(view.querySelectorAll('.item')).forEach(c => c.classList.remove('selected'));
     if (elemRef) elemRef.classList.add('selected');
 
-    // --- Right Panel Logic ---
 
-    // 1. Meta Data (Stars + Clock)
     let metaHtml = "";
     if (node.rating !== undefined) {
         metaHtml += `<div class="text-warning mb-1">`;
@@ -300,7 +298,6 @@ function selectItem(node, elemRef) {
     }
 
     if (node.prepTime && node.cookTime) {
-        // [UPDATED] Use Bootstrap clock icon instead of emoji
         metaHtml += `<div class="d-flex align-items-center gap-2 mt-1"><i class="bi bi-clock"></i> <span>${parseInt(node.prepTime) + parseInt(node.cookTime)} mins</span></div>`;
     }
 

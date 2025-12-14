@@ -310,15 +310,22 @@ function addPrivateFolder(folderName, pathArr, UID = "user1") {
  * take array of nodes as path and add a new recipe
  * set overwrite to True to ignore error message and overwrite recipe. (for recipeEditor)
  */
-function addPrivateRecipe(recipe, pathArr, UID = "user1",overwrite=false) {
+function addPrivateRecipe(recipe, pathArr, UID = "user1", overwrite=false) {
     let node = findFolder(pathArr, UID);
     if (node) {
-        if (node.children.find(c => c.title === recipe.title)) {
-            if(!overwrite){
+        const existingIndex = node.children.findIndex(c => c.title === recipe.title);
+        if (existingIndex !== -1) {
+            if (!overwrite) {
                 alert(recipe.title + " already exists!");
                 return false;
+            } else {
+                // Overwrite the existing recipe at the found index
+                node.children[existingIndex] = recipe;
+                pushLocalData();
+                return true;
             }
         }
+
         node.children.push(recipe);
         pushLocalData();
         return true;
