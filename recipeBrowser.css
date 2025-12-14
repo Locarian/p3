@@ -66,14 +66,12 @@ body {
 }
 
 @media (max-width: 1199px) {
-    /* when hidden right panel in small screen*/
     .browser {
         grid-template-columns: 200px 1fr;
     }
 }
 
 @media (max-width: 769px) {
-    /*when hidden both left and right in even smaller screen*/
     .browser {
         grid-template-columns: 1fr;
         gap: 0;
@@ -88,7 +86,6 @@ body {
     height: 100%;
 }
 
-/* Tree View */
 .tree-container {
     overflow-x: hidden;
     height: calc(100% - 64px);
@@ -129,7 +126,6 @@ body {
     color: var(--clr-light-a0);
 }
 
-/* Main View Items */
 .item {
     background: var(--clr-surface-a10);
     border: 1px solid;
@@ -138,13 +134,11 @@ body {
     overflow: hidden;
     color: var(--clr-light-a0) !important;
 
-    /* Default bg properties */
     background-repeat: no-repeat;
     background-size: 105%;
     background-position: center;
 }
 
-/* Styles for items with background images */
 .item.has-bg::before {
     content: "";
     position: absolute;
@@ -152,7 +146,6 @@ body {
     left: -10px;
     right: -10px;
     bottom: -10px;
-    /* Dark gradient overlay for text readability */
     background:  rgba(0,0,0,0.4) 100%;
     z-index: 1;
 }
@@ -163,7 +156,7 @@ body {
 }
 
 .item.selected {
-    border-color: var(--clr-primary-a0); /* Highlight color */
+    border-color: var(--clr-primary-a0);
     outline: 2px solid var(--clr-primary-a0);
 }
 
@@ -176,7 +169,7 @@ body {
     font-size: 22px;
     color: #1a1a1a;
     position: relative;
-    z-index: 2; /* above overlay */
+    z-index: 2;
 }
 
 .icon.folder {
@@ -187,7 +180,6 @@ body {
     background: linear-gradient(180deg, var(--file), #e3b84a);
 }
 
-/* Preview Area */
 .file-preview .big {
     width: 120px;
     height: 120px;
@@ -195,7 +187,7 @@ body {
     display: grid;
     place-items: center;
     font-size: 48px;
-    flex-shrink: 0; /* Prevents shrinking */
+    flex-shrink: 0;
 }
 
 .card-panel {
@@ -205,7 +197,6 @@ body {
     border-radius: 10px;
 }
 
-/* Breadcrumb Styles */
 .breadcrumb-item::before {
     content: "/";
     font-size: 1rem;
