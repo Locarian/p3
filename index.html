@@ -1,133 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FA25 CS472 Final Project</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-          xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tagKitchen - The OS for Your Recipes</title>
+    <link href="index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container nav-content">
+        <a href="#" class="logo">
+          <span>tagKitchen</span>
+        </a>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+        <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+        </label>
+        <div class="nav-links">
+          <a href="main.html">Main</a>
+          <a href="recipeBrowser.html">Browser</a>
+          <a href="recipeEditor.html">Editor</a>
+          <a href="uploadRecipe.html">Upload</a>
+          <a href="recipeBrowser.html">Display</a>
+          <a href="recipeBrowser.html">Checkout</a>
+          <a href="mealPlanner.html">Meal Planner</a>
+        </div>
+      </div>
+    </nav>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: lightgray;
-        }
-
-        .main-card {
-            max-width: 1000px;
-        }
-
-        .link-card {
-            transition: all 0.3s ease;
-            border-left: 5px solid transparent;
-            cursor: pointer;
-        }
-
-        .link-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-green {
-            border-left-color: green;
-            background-color: mediumspringgreen;
-        }
-
-        .theme-green:hover {
-            background-color: palegreen;
-        }
-
-    </style>
-</head>
-<body class="d-flex align-items-center justify-content-center min-vh-100 p-4">
-<div class="main-card w-100 bg-white shadow-lg rounded-4 p-4 p-md-5">
-    <header class="text-center mb-5">
-        <h1 class="display-4 fw-bolder text-dark mb-2">
-            This is temp. Main page
-        </h1>
-        <p class="fs-4 text-secondary">
-            Links to pages WIP
+    <section class="hero">
+      <div class="container">
+        <h1>The Operating System<br />For Your Kitchen</h1>
+        <p>
+          Manage recipes like files. Organize, edit, and plan your meals with a
+          powerful, local-first interface inspired by your favorite developer
+          tools.
         </p>
-        <p class="fs-4 text-secondary">
-            Green links ready for submission
+        <div>
+          <a href="recipeBrowser.html" class="btn btn-primary">Go to Browser</a>
+          <a href="uploadRecipe.html" class="btn btn-outline">Upload .txt</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <h2>Workflow & Features</h2>
+          <p>
+            A comprehensive suite of tools designed to streamline your cooking
+            process.
+          </p>
+        </div>
+
+        <div class="grid-container">
+          <div class="card browser" id="browser">
+            <div class="text-side">
+              <div class="card-content">
+                <h3>Recipe Browser</h3>
+                <p>
+                  Navigate your culinary collection with a familiar file system
+                  interface. Features a directory tree structure, breadcrumbs,
+                  and instant global search. Manage folders and files
+                  efficiently, just like Google Drive.
+                </p>
+                <div>
+                  <span class="mock-tag">Tree Structure</span>
+                  <span class="mock-tag">Global Search</span>
+                  <span class="mock-tag">File Management</span>
+                </div>
+              </div>
+            </div>
+            <div class="visual-side">
+              <img
+                id="screenshot"
+                src="recipe_browser.png"
+                alt="Recipe Browser"
+              />
+            </div>
+          </div>
+
+          <div class="card editor">
+            <div class="card-content">
+              <h3>Recipe Editor</h3>
+              <p>
+                Full control over your data. Create new recipes or modify
+                existing ones with a structured form editor. Update ingredients,
+                instructions, cooking time, and ratings instantly.
+              </p>
+              <a
+                href="recipeEditor.html"
+                style="
+                  color: var(--primary);
+                  font-weight: 500;
+                  margin-top: auto;
+                  display: inline-block;
+                "
+                >Start Editing →</a
+              >
+            </div>
+          </div>
+
+          <div class="card upload" id="upload">
+            <div class="card-content">
+              <h3>Smart Import</h3>
+              <p>
+                Seamlessly import `.txt` files. The system parses unstructured
+                text into formatted JSON objects and stores them directly in
+                your browser's LocalStorage.
+              </p>
+            </div>
+            <div style="margin-top: 20px; opacity: 0.5">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div class="card display">
+            <div class="card-content">
+              <h3>Clean Display</h3>
+              <p>
+                An optimized reading view designed for the kitchen. Focus on
+                instructions and ingredients without distractions.
+              </p>
+            </div>
+          </div>
+
+          <div class="card checkout" id="checkout">
+            <div class="card-content">
+              <h3>Recipe Checkout</h3>
+              <p>
+                Select multiple recipes for your next meal. The system
+                automatically aggregates ingredients into a single shopping
+                list.
+              </p>
+            </div>
+          </div>
+
+          <div class="card random" id="random">
+            <div class="card-content">
+              <h3>Inspiration Generator</h3>
+              <p>
+                Unsure what to eat?<br />Generate a random 3-day meal plan
+                instantly to spark your culinary creativity.
+              </p>
+              <button
+                class="btn btn-primary"
+                style="
+                  margin-top: 20px;
+                  background: white;
+                  color: black;
+                  border: none;
+                "
+              >
+                I'm Feeling Lucky
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <h3>tagKitchen</h3>
+        <p>University of Wisconsin-Madison CS472 Final Project</p>
+        <div class="team-list">
+          Made with <span style="color: #e25555">&hearts;</span> by Qixuan Chen,
+          DaeOck Kim, Zongze Lu, Caleb Kapen
+        </div>
+        <p style="margin-top: 20px; font-size: 0.8rem; color: #5f6368">
+          &copy; 2025 tagKitchen. All rights reserved.
         </p>
-        <a href="https://github.com/ivory0321/FA2025-CS472-Final-Project.git">Link to repo</a>
-    </header>
-
-
-    <div class="row g-4">
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="recipeBrowser.html" class="text-decoration-none">
-                <div class="card theme-green link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Recipe Browser</h2>
-                    <p class="text-secondary small mb-0">WIP</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="recipeEditor.html" class="text-decoration-none">
-                <div class="card theme-green link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Recipe Editor</h2>
-                    <p class="text-secondary small mb-0">WIP</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="uploadRecipe.html" class="text-decoration-none">
-                <div class="card theme-green link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Upload Recipe</h2>
-                    <p class="text-secondary small mb-0">WIP</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="communityUpload.html" class="text-decoration-none">
-                <div class="card link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Community Upload</h2>
-                    <p class="text-secondary small mb-0">Not yet started</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="ingredientsCheckout.html" class="text-decoration-none">
-                <div class="card link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Ingredients Checkout</h2>
-                    <p class="text-secondary small mb-0">Not yet started</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="mealPlanner.html" class="text-decoration-none">
-                <div class="card theme-green link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Random Recipe Generator</h2>
-                    <p class="text-secondary small mb-0">DONE</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="recipeDisplay.html" class="text-decoration-none">
-                <div class="card link-card rounded-3 p-4 h-100 shadow-sm">
-                    <h2 class="fs-5 fw-bold text-secondary mb-1">Recipe Display</h2>
-                    <p class="text-secondary small mb-0">Not yet started</p>
-                </div>
-            </a>
-        </div>
-
-    </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-
-</body>
+      </div>
+    </footer>
+  </body>
 </html>
