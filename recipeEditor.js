@@ -8,7 +8,7 @@ const recipePath = getSaveFilePathToOpen();
 
 const curRecipe = findRecipeByPath(recipePath) ?? {
   id: null,
-  coverImage: "",
+  coverImage: "test_recipe.jpg",
   title: "Enter Recipe Title Here",
   foodName: "Enter Main Food Name",
   description: "Enter a brief description of the dish here...",
