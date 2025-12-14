@@ -1,15 +1,6 @@
 import {
-    localData,
-    getPublicRecipes,
-    addPublicRecipe,
     getUserFS,
-    findFolder,
-    addPrivateFolder,
-    addPrivateRecipe,
-    apiID2localRecipe,
-    apiRandom2localRecipe,
     setSaveFilePathToOpen,
-    getSaveFilePathToOpen,
     setRecipeToOpen
 } from "./localStorageManager.js";
 
@@ -24,8 +15,6 @@ const pathInfo = document.getElementById("pathInfo");
 const searchInput = document.getElementById("search");
 const upBtn = document.getElementById("upBtn");
 //Each file/ folder represented as node obj.
-
-
 
 
 //array of active Nodes to be displayed
@@ -182,7 +171,7 @@ function displayView() {
                 el.style.backgroundImage = `url(${item.coverImage})`;
                 el.classList.add('has-bg');
             }
-        }else{
+        } else {
             el.setAttribute('style', 'background: var(--clr-surface-a10) !important');
         }
 
@@ -202,7 +191,7 @@ function displayView() {
         // Hide main icon if bg exists to clean up view, but keep text readable via overlay
         el.innerHTML = `
                     ${heartHtml}
-                    <div class="${iconClass}" style="${item.coverImage && item.type!=='folder' ? 'opacity:0' : ''}">${typeIcon}</div>
+                    <div class="${iconClass}" style="${item.coverImage && item.type !== 'folder' ? 'opacity:0' : ''}">${typeIcon}</div>
                     <div class="content-wrapper position-relative" style="z-index: 2;">
                         <div class="fw-bold text-truncate mb-1" style="font-size: 1.5rem; text-shadow: ${item.coverImage ? '0 2px 4px rgba(0,0,0,0.8)' : 'none'}">${item.title}</div>
                         <div class="meta d-flex justify-content-between mt-1" style="font-size: 1rem; text-shadow: ${item.coverImage ? '0 2px 4px rgba(0,0,0,0.8)' : 'none'}">
@@ -214,12 +203,12 @@ function displayView() {
 
         if (item.type !== "folder") {
             const heartBtn = el.querySelector('.fav-icon');
-            if(heartBtn){
+            if (heartBtn) {
                 heartBtn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     item.favorite = !item.favorite;
                     displayView();
-                    if(selected === item) selectItem(item);
+                    if (selected === item) selectItem(item);
                 });
             }
         }
@@ -340,7 +329,7 @@ function selectItem(node, elemRef) {
                 
                 <h6>Ingredients:</h6>
                 <ul class="ps-3 small text-secondary">
-                    ${(node.ingredients || []).slice(0,5).map(i => {
+                    ${(node.ingredients || []).slice(0, 5).map(i => {
                 return `<li>${typeof i === 'string' ? i : (i.quantity || '') + ' ' + (i.unit || '') + ' ' + i.name}</li>`;
             }).join('')}
                     ${(node.ingredients && node.ingredients.length > 5) ? '<li>...</li>' : ''}
