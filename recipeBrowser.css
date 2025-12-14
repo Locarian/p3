@@ -131,12 +131,30 @@ body {
 
 /* Main View Items */
 .item {
-    background: var(--clr-surface-a10) !important;
+    background: var(--clr-surface-a10);
     border: 1px solid;
     border-color: var(--clr-surface-a30);
     transition: transform .15s;
-    overflow-y: auto;
+    overflow: hidden;
     color: var(--clr-light-a0) !important;
+
+    /* Default bg properties */
+    background-repeat: no-repeat;
+    background-size: 105%;
+    background-position: center;
+}
+
+/* Styles for items with background images */
+.item.has-bg::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    /* Dark gradient overlay for text readability */
+    background:  rgba(0,0,0,0.4) 100%;
+    z-index: 1;
 }
 
 .item:hover {
@@ -145,8 +163,8 @@ body {
 }
 
 .item.selected {
-    border-color: var(--clr-surface-a30);
-    outline: 2px solid var(--clr-surface-a30);
+    border-color: var(--clr-primary-a0); /* Highlight color */
+    outline: 2px solid var(--clr-primary-a0);
 }
 
 .icon {
@@ -157,6 +175,8 @@ body {
     place-items: center;
     font-size: 22px;
     color: #1a1a1a;
+    position: relative;
+    z-index: 2; /* above overlay */
 }
 
 .icon.folder {
@@ -175,6 +195,7 @@ body {
     display: grid;
     place-items: center;
     font-size: 48px;
+    flex-shrink: 0; /* Prevents shrinking */
 }
 
 .card-panel {
@@ -184,6 +205,7 @@ body {
     border-radius: 10px;
 }
 
+/* Breadcrumb Styles */
 .breadcrumb-item::before {
     content: "/";
     font-size: 1rem;
@@ -218,6 +240,7 @@ body {
     border: 0;
     outline: 0;
     font-size: 0.9rem;
+    color: #fff;
 }
 
 .search-input-group input::placeholder {
@@ -240,5 +263,4 @@ body {
 
 .upBtn:hover {
     background: var(--clr-primary-a0);
-
 }
